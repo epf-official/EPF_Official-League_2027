@@ -325,21 +325,56 @@
     </div>
   </div>
 
-  <!-- JavaScript Logic -->
+ <!-- Supabase CDN Link -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- JavaScript Logic with Supabase Data Sync -->
   <script>
-    // System Local Data State
-    let players = JSON.parse(localStorage.getItem('epfl_players')) || [];
-    let fixtures = JSON.parse(localStorage.getItem('epfl_fixtures')) || [];
-    let matchDates = JSON.parse(localStorage.getItem('epfl_dates')) || {};
+    // Supabase Credentials (Connected)
+    const SUPABASE_URL = 'https://gjprvkrlyfpqqrwbvofj.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Global App States
+    let players = [];
+    let fixtures = [];
+    let matchDates = {};
     let isAdmin = false;
 
-    // Navigation Tab Switcher
+    // Fetch All Live Data From Supabase Database
+    async function fetchAllData() {
+      try {
+        const { data: pData } = await supabaseClient.from('players').select('*').order('created_at', { ascending: true });
+        players = pData || [];
+
+        const { data: fData } = await supabaseClient.from('fixtures').select('*').order('match_day', { ascending: true });
+        fixtures = (fData || []).map(item => ({
+          matchDay: item.match_day,
+          matches: item.matches
+        }));
+
+        const { data: dData } = await supabaseClient.from('match_dates').select('*');
+        matchDates = {};
+        (dData || []).forEach(d => {
+          matchDates[d.match_day] = d.date_val;
+        });
+
+        populateAdminMatchdaySelect();
+        renderStandings();
+      } catch (err) {
+        console.error('Data Fetch Error:', err);
+      }
+    }
+
+    // Navigation Switcher
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-indigo-600', 'text-white'));
       
-      document.getElementById(tabId).classList.add('active');
-      document.getElementById('btn-' + tabId).classList.add('bg-indigo-600', 'text-white');
+      const target = document.getElementById(tabId);
+      const targetBtn = document.getElementById('btn-' + tabId);
+      if (target) target.classList.add('active');
+      if (targetBtn) targetBtn.classList.add('bg-indigo-600', 'text-white');
 
       if (tabId === 'players') renderPlayers();
       if (tabId === 'fixtures') renderFixtures();
@@ -347,21 +382,22 @@
       if (tabId === 'admin') renderAdminPanel();
     }
 
-    // Admin Auth
+    // Admin Authentication
     function loginAdmin() {
       const pass = document.getElementById('admin-pass-input').value;
-      if (pass === "epfl123") { // Admin Pass: epfl123
+      if (pass === "epfl123") {
         isAdmin = true;
         document.getElementById('admin-auth').classList.add('hidden');
         document.getElementById('admin-controls').classList.remove('hidden');
         populateAdminMatchdaySelect();
+        renderAdminPanel();
       } else {
         document.getElementById('login-error').classList.remove('hidden');
       }
     }
 
-    // Add Player Logic
-    function addPlayer() {
+    // Add Player to Supabase
+    async function addPlayer() {
       const name = document.getElementById('add-p-name').value;
       const uid = document.getElementById('add-p-uid').value;
       const device = document.getElementById('add-p-device').value;
@@ -369,21 +405,27 @@
       if (!name || !uid) return alert('নাম ও ইউজার আইডি দেওয়া আবশ্যক!');
 
       const newPlayer = { id: Date.now().toString(), name, uid, device };
-      players.push(newPlayer);
-      localStorage.setItem('epfl_players', JSON.stringify(players));
 
+      const { error } = await supabaseClient.from('players').insert([newPlayer]);
+      if (error) return alert('প্লেয়ার যুক্ত করতে সমস্যা হয়েছে: ' + error.message);
+
+      players.push(newPlayer);
       document.getElementById('add-p-name').value = '';
       document.getElementById('add-p-uid').value = '';
       document.getElementById('add-p-device').value = '';
 
-      alert('প্লেয়ার সফলভাবে যুক্ত হয়েছে!');
+      alert('প্লেয়ার সফলভাবে যুক্ত হয়েছে!');
       renderPlayers();
     }
 
-    // Render Players List
+    // Render Players
     function renderPlayers() {
-      document.getElementById('player-count').innerText = `Total: ${players.length} Players`;
+      const countEl = document.getElementById('player-count');
+      if (countEl) countEl.innerText = `Total: ${players.length} Players`;
+      
       const grid = document.getElementById('players-grid');
+      if (!grid) return;
+
       grid.innerHTML = players.map(p => `
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col justify-between space-y-2">
           <div class="flex items-center space-x-3">
@@ -401,15 +443,16 @@
       `).join('');
     }
 
-    function deletePlayer(id) {
+    async function deletePlayer(id) {
+      const { error } = await supabaseClient.from('players').delete().eq('id', id);
+      if (error) return alert('ডিলিট করা যায়নি!');
       players = players.filter(p => p.id !== id);
-      localStorage.setItem('epfl_players', JSON.stringify(players));
       renderPlayers();
     }
 
-    // Round Robin Fixture Algorithm
-    function generateFixturesLogic() {
-      if (players.length < 2) return alert('অন্তত ২ জন প্লেয়ার থাকা লাগবে!');
+    // Generate Fixture with Supabase Sync
+    async function generateFixturesLogic() {
+      if (players.length < 2) return alert('অন্তত ২ জন প্লেয়ার থাকা লাগবে!');
       
       let list = [...players];
       if (list.length % 2 !== 0) list.push({ id: null, name: "BYE" });
@@ -431,7 +474,7 @@
               scoreA: null,
               scoreB: null,
               proof: null,
-              status: 'NOT_PLAYED' // NOT_PLAYED, PENDING, APPROVED
+              status: 'NOT_PLAYED'
             });
           }
         }
@@ -439,45 +482,56 @@
         list.splice(1, 0, list.pop());
       }
 
-      localStorage.setItem('epfl_fixtures', JSON.stringify(fixtures));
-      alert('সকল প্লেয়ারের রাউন্ড-রবিন ফিক্সচার তৈরি হয়ে গেছে!');
+      await supabaseClient.from('fixtures').delete().neq('id', 0);
+      const insertData = fixtures.map(f => ({ match_day: f.matchDay, matches: f.matches }));
+      const { error } = await supabaseClient.from('fixtures').insert(insertData);
+
+      if (error) return alert('ফিক্সচার সেভ করা যায়নি!');
+
+      alert('ফিক্সচার তৈরি হয়ে গেছে!');
       populateAdminMatchdaySelect();
       renderFixtures();
     }
 
-    // Populate Matchday Dropdown
     function populateAdminMatchdaySelect() {
       const select = document.getElementById('admin-matchday-select');
       const userSelect = document.getElementById('matchday-select');
-      select.innerHTML = '';
-      userSelect.innerHTML = '';
+      if (select) select.innerHTML = '';
+      if (userSelect) userSelect.innerHTML = '';
 
       fixtures.forEach(f => {
-        select.innerHTML += `<option value="${f.matchDay}">Match Day ${f.matchDay}</option>`;
-        userSelect.innerHTML += `<option value="${f.matchDay}">Match Day ${f.matchDay}</option>`;
+        if (select) select.innerHTML += `<option value="${f.matchDay}">Match Day ${f.matchDay}</option>`;
+        if (userSelect) userSelect.innerHTML += `<option value="${f.matchDay}">Match Day ${f.matchDay}</option>`;
       });
     }
 
-    function saveMatchdayDate() {
+    async function saveMatchdayDate() {
       const day = document.getElementById('admin-matchday-select').value;
       const dateVal = document.getElementById('admin-date-input').value;
+      
+      const { error } = await supabaseClient.from('match_dates').upsert({ match_day: parseInt(day), date_val: dateVal });
+      if (error) return alert('তারিখ সেভ করা যায়নি!');
+
       matchDates[day] = dateVal;
-      localStorage.setItem('epfl_dates', JSON.stringify(matchDates));
       alert(`Match Day ${day} এর তারিখ সেভ হয়েছে!`);
       renderFixtures();
     }
 
-    // Render Fixtures Tab
     function renderFixtures() {
-      const selectedDay = document.getElementById('matchday-select').value || 1;
+      const selectEl = document.getElementById('matchday-select');
+      const selectedDay = (selectEl && selectEl.value) ? selectEl.value : 1;
       const matchDayData = fixtures.find(f => f.matchDay == selectedDay);
 
-      document.getElementById('current-matchday-title').innerText = `Match Day ${selectedDay}`;
-      document.getElementById('current-matchday-date').innerText = `Date: ${matchDates[selectedDay] || 'Not Fixed Yet'}`;
+      const titleEl = document.getElementById('current-matchday-title');
+      const dateEl = document.getElementById('current-matchday-date');
+      if (titleEl) titleEl.innerText = `Match Day ${selectedDay}`;
+      if (dateEl) dateEl.innerText = `Date: ${matchDates[selectedDay] || 'Not Fixed Yet'}`;
 
       const list = document.getElementById('fixtures-list');
+      if (!list) return;
+
       if (!matchDayData) {
-        list.innerHTML = `<p class="text-slate-400 text-sm">কোনো ফিক্সচার পাওয়া যায়নি। অ্যাডমিন প্যানেল থেকে ফিক্সচার তৈরি করুন।</p>`;
+        list.innerHTML = `<p class="text-slate-400 text-sm">কোনো ফিক্সচার পাওয়া যায়নি।</p>`;
         return;
       }
 
@@ -505,26 +559,33 @@
       `).join('');
     }
 
-    // Submit Modal Handles
     function openSubmitModal(id, pA, pB) {
       document.getElementById('modal-match-id').value = id;
       document.getElementById('modal-player-a').innerText = pA;
       document.getElementById('modal-player-b').innerText = pB;
-      document.getElementById('submit-modal').classList.remove('hidden');
-      document.getElementById('submit-modal').classList.add('flex');
+      const modal = document.getElementById('submit-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
     }
 
     function closeModal() {
-      document.getElementById('submit-modal').classList.add('hidden');
-      document.getElementById('submit-modal').classList.remove('flex');
+      const modal = document.getElementById('submit-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
     }
 
-    function handleScoreSubmit(e) {
+    async function handleScoreSubmit(e) {
       e.preventDefault();
       const mId = document.getElementById('modal-match-id').value;
       const sA = parseInt(document.getElementById('modal-score-a').value);
       const sB = parseInt(document.getElementById('modal-score-b').value);
       const url = document.getElementById('modal-proof-url').value;
+
+      let targetMatchDay = null;
 
       fixtures.forEach(fd => {
         fd.matches.forEach(m => {
@@ -533,25 +594,31 @@
             m.scoreB = sB;
             m.proof = url;
             m.status = 'PENDING';
+            targetMatchDay = fd.matchDay;
           }
         });
       });
 
-      localStorage.setItem('epfl_fixtures', JSON.stringify(fixtures));
+      const fdData = fixtures.find(f => f.matchDay === targetMatchDay);
+      if (fdData) {
+        await supabaseClient.from('fixtures').update({ matches: fdData.matches }).eq('match_day', targetMatchDay);
+      }
+
       closeModal();
-      alert('রেজাল্ট জমা নেওয়া হয়েছে! অ্যাডমিন অ্যাপ্রুভ করলে পয়েন্ট টেবিলে যুক্ত হবে।');
+      alert('রেজাল্ট জমা নেওয়া হয়েছে!');
       renderFixtures();
     }
 
-    // Render Admin Approvals List
     function renderAdminPanel() {
       if (!isAdmin) return;
       const container = document.getElementById('pending-results-list');
+      if (!container) return;
+
       let pendingList = [];
 
       fixtures.forEach(fd => {
         fd.matches.forEach(m => {
-          if (m.status === 'PENDING') pendingList.push(m);
+          if (m.status === 'PENDING') pendingList.push({ ...m, matchDay: fd.matchDay });
         });
       });
 
@@ -567,14 +634,14 @@
             ${m.proof ? `<a href="${m.proof}" target="_blank" class="block text-xs text-indigo-400 underline mt-0.5">View Screenshot Proof</a>` : ''}
           </div>
           <div class="flex space-x-2">
-            <button onclick="approveMatch('${m.id}', true)" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded font-bold">Approve</button>
-            <button onclick="approveMatch('${m.id}', false)" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded font-bold">Reject</button>
+            <button onclick="approveMatch('${m.id}', true, ${m.matchDay})" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded font-bold">Approve</button>
+            <button onclick="approveMatch('${m.id}', false, ${m.matchDay})" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded font-bold">Reject</button>
           </div>
         </div>
       `).join('');
     }
 
-    function approveMatch(mId, isApproved) {
+    async function approveMatch(mId, isApproved, matchDay) {
       fixtures.forEach(fd => {
         fd.matches.forEach(m => {
           if (m.id === mId) {
@@ -583,13 +650,17 @@
           }
         });
       });
-      localStorage.setItem('epfl_fixtures', JSON.stringify(fixtures));
+
+      const fdData = fixtures.find(f => f.matchDay === matchDay);
+      if (fdData) {
+        await supabaseClient.from('fixtures').update({ matches: fdData.matches }).eq('match_day', matchDay);
+      }
+
       renderAdminPanel();
       renderFixtures();
       renderStandings();
     }
 
-    // Standings & Leaderboard Logic
     function renderStandings() {
       let stats = {};
       players.forEach(p => {
@@ -623,34 +694,35 @@
       let sorted = Object.values(stats).sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
 
       const tbody = document.getElementById('standings-body');
-      tbody.innerHTML = sorted.map((p, index) => `
-        <tr class="${index === 0 ? 'bg-indigo-900/30 font-semibold' : ''}">
-          <td class="px-4 py-3 text-center font-bold">${index === 0 ? '🏆 1' : index + 1}</td>
-          <td class="px-4 py-3 font-bold text-white flex items-center space-x-2">
-            <span>${p.name}</span>
-            ${index === 0 ? '<span class="text-xs bg-amber-400/20 text-amber-400 border border-amber-400/30 px-2 py-0.5 rounded-full">Champion</span>' : ''}
-          </td>
-          <td class="px-3 py-3 text-center">${p.mp}</td>
-          <td class="px-3 py-3 text-center text-emerald-400">${p.w}</td>
-          <td class="px-3 py-3 text-center text-amber-400">${p.d}</td>
-          <td class="px-3 py-3 text-center text-red-400">${p.l}</td>
-          <td class="px-3 py-3 text-center">${p.gf}</td>
-          <td class="px-3 py-3 text-center">${p.ga}</td>
-          <td class="px-3 py-3 text-center font-bold">${p.gd > 0 ? '+' + p.gd : p.gd}</td>
-          <td class="px-3 py-3 text-center font-extrabold text-indigo-400">${p.pts}</td>
-        </tr>
-      `).join('');
+      if (tbody) {
+        tbody.innerHTML = sorted.map((p, index) => `
+          <tr class="${index === 0 ? 'bg-indigo-900/30 font-semibold' : ''}">
+            <td class="px-4 py-3 text-center font-bold">${index === 0 ? '🏆 1' : index + 1}</td>
+            <td class="px-4 py-3 font-bold text-white flex items-center space-x-2">
+              <span>${p.name}</span>
+              ${index === 0 ? '<span class="text-xs bg-amber-400/20 text-amber-400 border border-amber-400/30 px-2 py-0.5 rounded-full">Champion</span>' : ''}
+            </td>
+            <td class="px-3 py-3 text-center">${p.mp}</td>
+            <td class="px-3 py-3 text-center text-emerald-400">${p.w}</td>
+            <td class="px-3 py-3 text-center text-amber-400">${p.d}</td>
+            <td class="px-3 py-3 text-center text-red-400">${p.l}</td>
+            <td class="px-3 py-3 text-center">${p.gf}</td>
+            <td class="px-3 py-3 text-center">${p.ga}</td>
+            <td class="px-3 py-3 text-center font-bold">${p.gd > 0 ? '+' + p.gd : p.gd}</td>
+            <td class="px-3 py-3 text-center font-extrabold text-indigo-400">${p.pts}</td>
+          </tr>
+        `).join('');
+      }
 
-      // Top Leader Quick Stat
-      if (sorted.length > 0 && sorted[0].pts > 0) {
-        document.getElementById('stat-leader').innerText = `${sorted[0].name} (${sorted[0].pts} PTS)`;
+      const leaderEl = document.getElementById('stat-leader');
+      if (leaderEl && sorted.length > 0 && sorted[0].pts > 0) {
+        leaderEl.innerText = `${sorted[0].name} (${sorted[0].pts} PTS)`;
       }
     }
 
-    // App Initialization
+    // Initialize App Data
     window.onload = function() {
-      populateAdminMatchdaySelect();
-      renderStandings();
+      fetchAllData();
     };
   </script>
 </body>
