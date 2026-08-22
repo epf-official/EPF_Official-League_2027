@@ -162,39 +162,80 @@
     </section>
 
     <!-- RULES TAB -->
-    <section id="rules" class="tab-content space-y-4">
-      <h2 class="text-xl font-bold">Tournament Rules & Guidelines</h2>
-      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4 text-slate-300 text-sm">
-        <div class="flex items-start space-x-3">
-          <i class="fa-solid fa-clock text-indigo-400 mt-1"></i>
-          <div>
-            <h4 class="font-bold text-white">Match Duration & Conditions</h4>
-            <p>প্রতিটি ম্যাচ সময় ৮ মিনিট (8 Minutes Match) নির্ধারণ করা থাকবে। ম্যাচ কন্ডিশন 'Excellent' বা নরমাল মোডে থাকবে।</p>
-          </div>
-        </div>
-        <div class="flex items-start space-x-3 border-t border-slate-700/60 pt-3">
-          <i class="fa-solid fa-hourglass-end text-amber-400 mt-1"></i>
-          <div>
-            <h4 class="font-bold text-white">Match Deadline</h4>
-            <p>নির্ধারিত দিনের প্রতিটি ম্যাচের ফাইনাল ডেডলাইন রাত <b>১২:৫০ AM</b>। নির্ধারিত সময়ের মধ্যে রেজাল্ট জমা না দিলে ম্যাচ অমীমাংসিত/বাতিল বলে গণ্য হতে পারে।</p>
-          </div>
-        </div>
-        <div class="flex items-start space-x-3 border-t border-slate-700/60 pt-3">
-          <i class="fa-solid fa-wifi text-red-400 mt-1"></i>
-          <div>
-            <h4 class="font-bold text-white">Network Disconnection Rule</h4>
-            <p>খেলার মাঝে নেটওয়ার্ক সমস্যার কারণে ডিসকানেক্ট হলে প্রতিপক্ষের কথা অনুযায়ী সিদ্ধান্ত নেওয়া হবে বা স্ক্রিনশট প্রুফ অ্যাটাচ করতে হবে।</p>
-          </div>
-        </div>
-        <div class="flex items-start space-x-3 border-t border-slate-700/60 pt-3">
-          <i class="fa-solid fa-camera text-emerald-400 mt-1"></i>
-          <div>
-            <h4 class="font-bold text-white">Proof & Result Submission</h4>
-            <p>রেজাল্ট সাবমিট করার সময় সঠিক স্কোর ও ম্যাচের প্রুফ হিসেবে স্ক্রিনশটের লিংক দিতে হবে। অ্যাডমিন ম্যানুয়ালি ভেরিফাই করে অ্যাপ্রুভ করবেন।</p>
-          </div>
-        </div>
-      </div>
-    </section>
+   <div id="rules-tab" class="tab-content hidden space-y-6">
+  <!-- Section Title -->
+  <div class="border-b border-slate-700 pb-3">
+    <h2 class="text-2xl font-black text-white flex items-center gap-2">
+      <i class="fa-solid fa-gavel text-indigo-500"></i> টুর্নামেন্ট নিয়মাবলী (Tournament Rules)
+    </h2>
+    <p class="text-xs text-slate-400 mt-1">ম্যাচ পরিচালনা ও অভিযোগ সংক্রান্ত সকল অফিশিয়াল নিয়মাবলী</p>
+  </div>
+
+  <!-- Rule 1: Match Room Settings -->
+  <div class="bg-slate-800/90 rounded-2xl p-5 border border-slate-700 space-y-3">
+    <h3 class="text-lg font-bold text-indigo-400 flex items-center gap-2">
+      <span class="bg-indigo-600/30 text-indigo-300 w-7 h-7 rounded-lg flex items-center justify-center text-sm border border-indigo-500/30">১</span>
+      ম্যাচ রুম সংক্রান্ত নিয়মাবলী
+    </h3>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-semibold text-slate-300 bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
+      <div>Match Type: <span class="text-white font-bold">Standard</span></div>
+      <div>Match Time: <span class="text-white font-bold">8 Minutes</span></div>
+      <div>Injuries: <span class="text-white font-bold">ON</span></div>
+      <div>Extra Time & PK: <span class="text-white font-bold">OFF</span></div>
+      <div>Sub Intervals: <span class="text-white font-bold">3</span></div>
+      <div>Substitutes: <span class="text-white font-bold">5</span></div>
+      <div>Home Condition: <span class="text-white font-bold">Normal</span></div>
+      <div>Away Condition: <span class="text-white font-bold">Normal</span></div>
+    </div>
+    <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside pl-1">
+      <li><strong>সুপার ম্যাচ (প্রয়োজনে):</strong> Extra Time & PK — <strong>ON</strong>।</li>
+      <li>যে ভিআইপি/VPN নিবে তার স্পষ্ট সিদ্ধান্তে ম্যাচ রুম ক্রিয়েট হবে।</li>
+      <li>ম্যাচ চলাকালীন বা শেষে রুম সেটিংস সংক্রান্ত অভিযোগ গ্রহণযোগ্য নয়। তবে কোনো প্লেয়ার নিজের ফর্ম ভালো দিয়ে অপোনেন্টের ফর্ম খারাপ দিলে প্রমাণ সাপেক্ষে অটোলস পাবে।</li>
+    </ul>
+  </div>
+
+  <!-- Rule 2: Lag & Disconnection -->
+  <div class="bg-slate-800/90 rounded-2xl p-5 border border-slate-700 space-y-3">
+    <h3 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+      <span class="bg-amber-600/30 text-amber-300 w-7 h-7 rounded-lg flex items-center justify-center text-sm border border-amber-500/30">২</span>
+      ম্যাচ ল্যাগ, স্লো ও ডিসকানেক্টেড সংক্রান্ত
+    </h3>
+    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside pl-1">
+      <li><strong>ল্যাগ/স্লো ইস্যু:</strong> ল্যাগ বা স্লো হলে স্ক্রিন রেকর্ডার চালু করে স্পষ্ট প্রমাণ রেখে গেম পজ করে ম্যাচ ডিসকানেক্ট করতে হবে। প্রমাণ ব্যতীত অন্য উদ্দেশ্যে ডিসকানেক্ট করলে ইয়েলো কার্ড পাবেন।</li>
+      <li><strong>রিম্যাচ খেলার সময় হিসাব:</strong> ম্যাচের বাকি মিনিটের জন্য (৯০ মিনিট - সম্পন্ন মিনিট = বাকি সময়) প্রথম থেকে রিম্যাচ খেলতে হবে।</li>
+      <li><strong>গোল কাউন্ট:</strong> ডিসকানেক্টেড হওয়ার পূর্ব মুহূর্তে গোলবার/শট নেওয়ার স্পষ্ট ভিডিও বা স্ক্রিনশট থাকলে তা গোল হিসেবে কাউন্ট হবে। কিন্তু রিম্যাচের নির্ধারিত সময়ের ১ সেকেন্ড পরবর্তী গোল ধরা হবে না।</li>
+      <li><strong>সময় অপচয়/ব্যাকপাস:</strong> সময় অপচয়ের জন্য ব্যাকপাস করা নিষিদ্ধ। ব্যাকপাসের সময়কাল হিসেব করে তার ৩ গুণ বা তার বেশি সময় অতিরিক্ত রিম্যাচে যোগ হবে এবং অভিযুক্ত প্লেয়ারকে <strong>হলুদ কার্ড (Yellow Card)</strong> দেওয়া হবে।</li>
+      <li><strong>১৫ মিনিটের নিয়ম:</strong> ম্যাচ ডিসকানেক্ট হলে সর্বোচ্চ ১৫ মিনিটের মধ্যে রিম্যাচ শুরু করতে হবে। অন্যথায় ব্যর্থ প্লেয়ার অটোলস খাবে।</li>
+    </ul>
+  </div>
+
+  <!-- Rule 3: Screen Record & Proof -->
+  <div class="bg-slate-800/90 rounded-2xl p-5 border border-slate-700 space-y-3">
+    <h3 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+      <span class="bg-emerald-600/30 text-emerald-300 w-7 h-7 rounded-lg flex items-center justify-center text-sm border border-emerald-500/30">৩</span>
+      স্ক্রিনরেকর্ড ও ভিডিও প্রুফ জমা দেওয়ার নিয়ম
+    </h3>
+    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside pl-1">
+      <li><strong>স্ক্রিনরেকর্ড বাধ্যবাধকতা:</strong> জয়লাভ করলে, ড্র হলে বা এগিয়ে থাকা অবস্থায় ডিসকানেক্ট হলে স্ক্রিনরেকর্ড প্রুফ দিতে হবে।</li>
+      <li><strong>ভিডিও পাঠানোর সময়:</strong> ম্যাচ শেষ হওয়ার সর্বোচ্চ <strong>১০ মিনিটের মধ্যে</strong> স্ক্রিনরেকর্ড প্রুফ গ্রুপে পাঠাতে হবে।</li>
+      <li><strong>যা যা দেখানো বাধ্যতামূলক:</strong> রুম আইডি, ম্যাচ শেষের রেজাল্ট পেজ, নিজের Konami User ID এবং ফোন সেটিংস > About Phone থেকে ফোনের ডিভাইস মডেল স্পষ্ট থাকতে হবে।</li>
+      <li><strong>ভিডিও কাটা বা পজ করা যাবে না:</strong> স্ক্রিনরেকর্ড কোনো পজ (Pause) বা এডিট করা থাকলে অটোলস ও ক্ষেত্রবিশেষে <strong>৭ দিন থেকে স্থায়ী ব্যান</strong> দেওয়া হতে পারে।</li>
+    </ul>
+  </div>
+
+  <!-- Rule 4: Auto Result & Penalties -->
+  <div class="bg-slate-800/90 rounded-2xl p-5 border border-slate-700 space-y-3">
+    <h3 class="text-lg font-bold text-red-400 flex items-center gap-2">
+      <span class="bg-red-600/30 text-red-300 w-7 h-7 rounded-lg flex items-center justify-center text-sm border border-red-500/30">৪</span>
+      অটো রেজাল্ট, অনুপস্থিতি ও শাস্তি সংক্রান্ত নিয়ম
+    </h3>
+    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside pl-1">
+      <li><strong>রেসপন্স টাইম:</strong> নির্ধারিত রেসপন্স টাইমের মধ্যে ম্যাচডে গ্রুপে একটিভ থাকতে হবে। একপক্ষ অনুপস্থিত থাকলে অপরপক্ষ অটো উইন (Auto Win) পাবে, উভয়পক্ষ অনুপস্থিত থাকলে অটো ড্র (Auto Draw) হবে।</li>
+      <li><strong>রুম কোড পেয়ে না ঢোকা:</strong> রুম কোড দেওয়ার পর ৫ মিনিটের মধ্যে অপোনেন্ট রুমে প্রবেশ করতে না পারলে অটোলস পাবে।</li>
+      <li><strong>খারাপ ব্যবহার ও ভায়োলেশন:</strong> যেকোনো প্রকার অসদাচরণ, ফেক প্রুফ জমা, কিংবা স্মার্ট এসিস্ট নিষিদ্ধ ম্যাচে অন রাখার জন্য সরাসরি <strong>অটো লস ও রেড কার্ড (Red Card / Ban)</strong> প্রদান করা হবে।</li>
+    </ul>
+  </div>
+</div>
 
     <!-- ADMIN PANEL TAB -->
     <section id="admin" class="tab-content space-y-6">
