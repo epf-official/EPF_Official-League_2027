@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elite Playmakers FC League (EPFL 2027-28)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+  <!-- Header & Navigation -->
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+        <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xl shadow-lg">EP</div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight text-white">EPFL 2027-28</h1>
+          <p class="text-xs text-indigo-400">Elite Playmakers FC League</p>
+        </div>
+      </div>
+      <nav class="flex space-x-1 mt-2 sm:mt-0 text-sm font-medium">
+        <button onclick="switchTab('home')" class="nav-btn px-3 py-2 rounded-lg bg-indigo-600 text-white" id="btn-home">Home</button>
+        <button onclick="switchTab('players')" class="nav-btn px-3 py-2 rounded-lg hover:bg-slate-700 text-slate-300" id="btn-players">Players</button>
+        <button onclick="switchTab('fixtures')" class="nav-btn px-3 py-2 rounded-lg hover:bg-slate-700 text-slate-300" id="btn-fixtures">Fixtures</button>
+        <button onclick="switchTab('table')" class="nav-btn px-3 py-2 rounded-lg hover:bg-slate-700 text-slate-300" id="btn-table">Point Table</button>
+        <button onclick="switchTab('rules')" class="nav-btn px-3 py-2 rounded-lg hover:bg-slate-700 text-slate-300" id="btn-rules">Rules</button>
+        <button onclick="switchTab('admin')" class="nav-btn px-3 py-2 rounded-lg hover:bg-red-600/80 text-white bg-red-900/40" id="btn-admin"><i class="fa-solid fa-lock text-xs mr-1"></i>Admin</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- HOME TAB -->
+    <section id="home" class="tab-content active space-y-6">
+      <!-- Welcome Banner -->
+      <div class="bg-gradient-to-r from-indigo-900 via-slate-800 to-purple-900 border border-indigo-500/30 rounded-2xl p-6 text-center shadow-2xl relative overflow-hidden">
+        <div class="inline-block p-3 bg-indigo-600/20 rounded-full mb-3 border border-indigo-500/40">
+          <i class="fa-solid fa-trophy text-4xl text-amber-400"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold text-white tracking-wide">WELCOME TO EPFL LEAGUE</h2>
+        <p class="text-indigo-300 mt-1 font-medium">Elite Playmakers FC Tournament • Season 2027-28</p>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex items-center space-x-3">
+          <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg"><i class="fa-solid fa-crown text-2xl"></i></div>
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">LEAGUE LEADER</p>
+            <p id="stat-leader" class="font-bold text-base text-white">Tanvir Hasan</p>
+          </div>
+        </div>
+        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex items-center space-x-3">
+          <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg"><i class="fa-solid fa-shoe-prints text-2xl"></i></div>
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">TOP SCORER</p>
+            <p id="stat-scorer" class="font-bold text-base text-white">Rahat (12 Goals)</p>
+          </div>
+        </div>
+        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex items-center space-x-3">
+          <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg"><i class="fa-solid fa-shield-halved text-2xl"></i></div>
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">CLEAN SHIELD</p>
+            <p id="stat-cleansheet" class="font-bold text-base text-white">Shakib (5 CS)</p>
+          </div>
+        </div>
+        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex items-center space-x-3">
+          <div class="p-3 bg-purple-500/10 text-purple-400 rounded-lg"><i class="fa-solid fa-gamepad text-2xl"></i></div>
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">PROGRESS</p>
+            <p id="stat-progress" class="font-bold text-base text-white">Match Day 3/29</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live / Today's Match Banner -->
+      <div class="bg-slate-800 rounded-xl p-5 border border-slate-700">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+          <h3 class="text-lg font-bold flex items-center text-red-400">
+            <span class="w-3 h-3 bg-red-500 rounded-full animate-ping mr-2"></span> TODAY'S MATCHES
+          </h3>
+          <span class="text-xs font-semibold bg-slate-700 text-slate-300 px-3 py-1 rounded-full">Deadline: 12:50 AM</span>
+        </div>
+        <div id="today-matches-container" class="space-y-3">
+          <!-- Dynamic today's matches will load here -->
+          <p class="text-slate-400 text-sm text-center py-4">আজকে নির্ধারিত কোনো ম্যাচ নেই। ফিক্সচার সেকশনে গিয়ে সমস্ত ম্যাচ দেখুন।</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAYERS TAB -->
+    <section id="players" class="tab-content space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold">Tournament Players</h2>
+        <span id="player-count" class="bg-indigo-600 text-xs px-3 py-1 rounded-full font-bold">Total: 0 Players</span>
+      </div>
+      <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Dynamic Player Cards -->
+      </div>
+    </section>
+
+    <!-- FIXTURES & RESULTS TAB -->
+    <section id="fixtures" class="tab-content space-y-6">
+      <div class="flex flex-wrap justify-between items-center gap-3">
+        <h2 class="text-xl font-bold">Match Schedule & Results</h2>
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-slate-400">Select Match Day:</label>
+          <select id="matchday-select" onchange="renderFixtures()" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold text-white">
+            <!-- Dynamic Options -->
+          </select>
+        </div>
+      </div>
+
+      <div id="matchday-header" class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+        <div>
+          <h3 id="current-matchday-title" class="text-lg font-bold text-indigo-400">Match Day 1</h3>
+          <p id="current-matchday-date" class="text-xs text-slate-400">Date: Not Fixed Yet</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-amber-400 font-semibold bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">Deadline: 12:50 AM</span>
+        </div>
+      </div>
+
+      <div id="fixtures-list" class="space-y-3">
+        <!-- Dynamic Fixture Items -->
+      </div>
+    </section>
+
+    <!-- POINT TABLE TAB -->
+    <section id="table" class="tab-content space-y-4">
+      <h2 class="text-xl font-bold">League Standings</h2>
+      <div class="overflow-x-auto bg-slate-800 rounded-xl border border-slate-700 shadow-xl">
+        <table class="w-full text-sm text-left text-slate-300">
+          <thead class="text-xs text-slate-400 uppercase bg-slate-900/60 border-b border-slate-700">
+            <tr>
+              <th class="px-4 py-3 text-center">Pos</th>
+              <th class="px-4 py-3">Player Name</th>
+              <th class="px-3 py-3 text-center">MP</th>
+              <th class="px-3 py-3 text-center">W</th>
+              <th class="px-3 py-3 text-center">D</th>
+              <th class="px-3 py-3 text-center">L</th>
+              <th class="px-3 py-3 text-center">GF</th>
+              <th class="px-3 py-3 text-center">GA</th>
+              <th class="px-3 py-3 text-center">GD</th>
+              <th class="px-3 py-3 text-center font-bold text-indigo-400">PTS</th>
+            </tr>
+          </thead>
+          <tbody id="standings-body" class="divide-y divide-slate-700/50">
+            <!-- Dynamic Standings -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- RULES TAB -->
+    <section id="rules" class="tab-content space-y-4">
+      <h2 class="text-xl font-bold">Tournament Rules & Guidelines</h2>
+      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4 text-slate-300 text-sm">
+        <div class="flex items-start space-x-3">
+          <i class="fa-solid fa-clock text-indigo-400 mt-1"></i>
+          <div>
+            <h4 class="font-bold text-white">Match Duration & Conditions</h4>
+            <p>প্রতিটি ম্যাচ সময় ৮ মিনিট (8 Minutes Match) নির্ধারণ করা থাকবে। ম্যাচ কন্ডিশন 'Excellent' বা নরমাল মোডে থাকবে।</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-3 border-t border-slate-700/60 pt-3">
+          <i class="fa-solid fa-hourglass-end text-amber-400 mt-1"></i>
+          <div>
+            <h4 class="font-bold text-white">Match Deadline</h4>
+            <p>নির্ধারিত দিনের প্রতিটি ম্যাচের ফাইনাল ডেডলাইন রাত <b>১২:৫০ AM</b>। নির্ধারিত সময়ের মধ্যে রেজাল্ট জমা না দিলে ম্যাচ অমীমাংসিত/বাতিল বলে গণ্য হতে পারে।</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-3 border-t border-slate-700/60 pt-3">
+          <i class="fa-solid fa-wifi text-red-400 mt-1"></i>
+          <div>
+            <h4 class="font-bold text-white">Network Disconnection Rule</h4>
+            <p>খেলার মাঝে নেটওয়ার্ক সমস্যার কারণে ডিসকানেক্ট হলে প্রতিপক্ষের কথা অনুযায়ী সিদ্ধান্ত নেওয়া হবে বা স্ক্রিনশট প্রুফ অ্যাটাচ করতে হবে।</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-3 border-t border-slate-700/60 pt-3">
+          <i class="fa-solid fa-camera text-emerald-400 mt-1"></i>
+          <div>
+            <h4 class="font-bold text-white">Proof & Result Submission</h4>
+            <p>রেজাল্ট সাবমিট করার সময় সঠিক স্কোর ও ম্যাচের প্রুফ হিসেবে স্ক্রিনশটের লিংক দিতে হবে। অ্যাডমিন ম্যানুয়ালি ভেরিফাই করে অ্যাপ্রুভ করবেন।</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN PANEL TAB -->
+    <section id="admin" class="tab-content space-y-6">
+      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+        <h2 class="text-xl font-bold mb-4 flex items-center text-red-400">
+          <i class="fa-solid fa-user-shield mr-2"></i> Admin Dashboard
+        </h2>
+
+        <!-- Password Auth Layer -->
+        <div id="admin-auth" class="space-y-3 max-w-sm">
+          <label class="text-sm text-slate-300">Enter Admin Password:</label>
+          <div class="flex space-x-2">
+            <input type="password" id="admin-pass-input" placeholder="Password" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm w-full text-white">
+            <button onclick="loginAdmin()" class="bg-indigo-600 px-4 py-2 rounded-lg text-sm font-bold text-white">Login</button>
+          </div>
+          <p id="login-error" class="text-xs text-red-400 hidden">ভুল পাসওয়ার্ড দিয়েছেন!</p>
+        </div>
+
+        <!-- Controls (Hidden until logged in) -->
+        <div id="admin-controls" class="hidden space-y-8">
+          <!-- Add Player Section -->
+          <div class="border-t border-slate-700 pt-4">
+            <h3 class="font-bold text-indigo-400 mb-3">Add New Player</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input type="text" id="add-p-name" placeholder="Player Name" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm text-white">
+              <input type="text" id="add-p-uid" placeholder="eFootball User ID / UID" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm text-white">
+              <input type="text" id="add-p-device" placeholder="Device Name (e.g. iPhone 13)" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm text-white">
+            </div>
+            <button onclick="addPlayer()" class="mt-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg text-sm">Add Player</button>
+          </div>
+
+          <!-- Fixture Generator -->
+          <div class="border-t border-slate-700 pt-4">
+            <h3 class="font-bold text-indigo-400 mb-2">Round-Robin Fixture Control</h3>
+            <p class="text-xs text-slate-400 mb-3">সব প্লেয়ার অ্যাড করার পর এটি প্রেস করলে স্বয়ংক্রিয়ভাবে সবার সাথে সবার ম্যাচের ফিক্সচার তৈরি হবে।</p>
+            <button onclick="generateFixturesLogic()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-4 py-2 rounded-lg text-sm">Auto-Generate Fixtures</button>
+          </div>
+
+          <!-- Set Matchday Dates -->
+          <div class="border-t border-slate-700 pt-4">
+            <h3 class="font-bold text-indigo-400 mb-3">Set Match Day Dates</h3>
+            <div class="flex items-center space-x-2 max-w-md">
+              <select id="admin-matchday-select" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm text-white">
+                <!-- Dynamic -->
+              </select>
+              <input type="text" id="admin-date-input" placeholder="e.g. Thursday, 12 March" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm text-white flex-1">
+              <button onclick="saveMatchdayDate()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-sm font-bold">Save Date</button>
+            </div>
+          </div>
+
+          <!-- Pending Approvals -->
+          <div class="border-t border-slate-700 pt-4">
+            <h3 class="font-bold text-indigo-400 mb-3">Pending Result Approvals</h3>
+            <div id="pending-results-list" class="space-y-3">
+              <p class="text-xs text-slate-400">কোনো পেন্ডিং রেজাল্ট নেই।</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Submit Score Modal -->
+  <div id="submit-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 max-w-md w-full rounded-xl p-6 border border-slate-700 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold text-lg text-white">Submit Match Result</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <form onsubmit="handleScoreSubmit(event)" class="space-y-3">
+        <input type="hidden" id="modal-match-id">
+        <div class="flex justify-between items-center bg-slate-900 p-3 rounded-lg border border-slate-700">
+          <span id="modal-player-a" class="font-bold text-sm text-indigo-300">Player A</span>
+          <input type="number" id="modal-score-a" required min="0" class="w-12 text-center bg-slate-800 border border-slate-600 rounded px-2 py-1 text-white font-bold">
+          <span class="font-bold text-slate-500">VS</span>
+          <input type="number" id="modal-score-b" required min="0" class="w-12 text-center bg-slate-800 border border-slate-600 rounded px-2 py-1 text-white font-bold">
+          <span id="modal-player-b" class="font-bold text-sm text-indigo-300">Player B</span>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Screenshot Image URL (Imgur / PostImage Proof Link):</label>
+          <input type="url" id="modal-proof-url" required placeholder="https://i.imgur.com/example.png" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm w-full text-white">
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-lg text-sm">Submit For Approval</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // System Local Data State
+    let players = JSON.parse(localStorage.getItem('epfl_players')) || [];
+    let fixtures = JSON.parse(localStorage.getItem('epfl_fixtures')) || [];
+    let matchDates = JSON.parse(localStorage.getItem('epfl_dates')) || {};
+    let isAdmin = false;
+
+    // Navigation Tab Switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-indigo-600', 'text-white'));
+      
+      document.getElementById(tabId).classList.add('active');
+      document.getElementById('btn-' + tabId).classList.add('bg-indigo-600', 'text-white');
+
+      if (tabId === 'players') renderPlayers();
+      if (tabId === 'fixtures') renderFixtures();
+      if (tabId === 'table') renderStandings();
+      if (tabId === 'admin') renderAdminPanel();
+    }
+
+    // Admin Auth
+    function loginAdmin() {
+      const pass = document.getElementById('admin-pass-input').value;
+      if (pass === "epfl123") { // Admin Pass: epfl123
+        isAdmin = true;
+        document.getElementById('admin-auth').classList.add('hidden');
+        document.getElementById('admin-controls').classList.remove('hidden');
+        populateAdminMatchdaySelect();
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+      }
+    }
+
+    // Add Player Logic
+    function addPlayer() {
+      const name = document.getElementById('add-p-name').value;
+      const uid = document.getElementById('add-p-uid').value;
+      const device = document.getElementById('add-p-device').value;
+
+      if (!name || !uid) return alert('নাম ও ইউজার আইডি দেওয়া আবশ্যক!');
+
+      const newPlayer = { id: Date.now().toString(), name, uid, device };
+      players.push(newPlayer);
+      localStorage.setItem('epfl_players', JSON.stringify(players));
+
+      document.getElementById('add-p-name').value = '';
+      document.getElementById('add-p-uid').value = '';
+      document.getElementById('add-p-device').value = '';
+
+      alert('প্লেয়ার সফলভাবে যুক্ত হয়েছে!');
+      renderPlayers();
+    }
+
+    // Render Players List
+    function renderPlayers() {
+      document.getElementById('player-count').innerText = `Total: ${players.length} Players`;
+      const grid = document.getElementById('players-grid');
+      grid.innerHTML = players.map(p => `
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col justify-between space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold">${p.name.charAt(0)}</div>
+            <div>
+              <h4 class="font-bold text-white text-base">${p.name}</h4>
+              <p class="text-xs text-slate-400">UID: <span class="text-indigo-300">${p.uid}</span></p>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400 border-t border-slate-700/60 pt-2 flex items-center justify-between">
+            <span><i class="fa-solid fa-mobile-screen text-slate-500 mr-1"></i>${p.device || 'N/A'}</span>
+            ${isAdmin ? `<button onclick="deletePlayer('${p.id}')" class="text-red-400 hover:text-red-300">Delete</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deletePlayer(id) {
+      players = players.filter(p => p.id !== id);
+      localStorage.setItem('epfl_players', JSON.stringify(players));
+      renderPlayers();
+    }
+
+    // Round Robin Fixture Algorithm
+    function generateFixturesLogic() {
+      if (players.length < 2) return alert('অন্তত ২ জন প্লেয়ার থাকা লাগবে!');
+      
+      let list = [...players];
+      if (list.length % 2 !== 0) list.push({ id: null, name: "BYE" });
+
+      const totalRounds = list.length - 1;
+      const matchesPerRound = list.length / 2;
+      fixtures = [];
+
+      for (let round = 0; round < totalRounds; round++) {
+        const roundMatches = [];
+        for (let i = 0; i < matchesPerRound; i++) {
+          const home = list[i];
+          const away = list[list.length - 1 - i];
+          if (home.id && away.id) {
+            roundMatches.push({
+              id: `m_${round}_${i}`,
+              playerA: home.name,
+              playerB: away.name,
+              scoreA: null,
+              scoreB: null,
+              proof: null,
+              status: 'NOT_PLAYED' // NOT_PLAYED, PENDING, APPROVED
+            });
+          }
+        }
+        fixtures.push({ matchDay: round + 1, matches: roundMatches });
+        list.splice(1, 0, list.pop());
+      }
+
+      localStorage.setItem('epfl_fixtures', JSON.stringify(fixtures));
+      alert('সকল প্লেয়ারের রাউন্ড-রবিন ফিক্সচার তৈরি হয়ে গেছে!');
+      populateAdminMatchdaySelect();
+      renderFixtures();
+    }
+
+    // Populate Matchday Dropdown
+    function populateAdminMatchdaySelect() {
+      const select = document.getElementById('admin-matchday-select');
+      const userSelect = document.getElementById('matchday-select');
+      select.innerHTML = '';
+      userSelect.innerHTML = '';
+
+      fixtures.forEach(f => {
+        select.innerHTML += `<option value="${f.matchDay}">Match Day ${f.matchDay}</option>`;
+        userSelect.innerHTML += `<option value="${f.matchDay}">Match Day ${f.matchDay}</option>`;
+      });
+    }
+
+    function saveMatchdayDate() {
+      const day = document.getElementById('admin-matchday-select').value;
+      const dateVal = document.getElementById('admin-date-input').value;
+      matchDates[day] = dateVal;
+      localStorage.setItem('epfl_dates', JSON.stringify(matchDates));
+      alert(`Match Day ${day} এর তারিখ সেভ হয়েছে!`);
+      renderFixtures();
+    }
+
+    // Render Fixtures Tab
+    function renderFixtures() {
+      const selectedDay = document.getElementById('matchday-select').value || 1;
+      const matchDayData = fixtures.find(f => f.matchDay == selectedDay);
+
+      document.getElementById('current-matchday-title').innerText = `Match Day ${selectedDay}`;
+      document.getElementById('current-matchday-date').innerText = `Date: ${matchDates[selectedDay] || 'Not Fixed Yet'}`;
+
+      const list = document.getElementById('fixtures-list');
+      if (!matchDayData) {
+        list.innerHTML = `<p class="text-slate-400 text-sm">কোনো ফিক্সচার পাওয়া যায়নি। অ্যাডমিন প্যানেল থেকে ফিক্সচার তৈরি করুন।</p>`;
+        return;
+      }
+
+      list.innerHTML = matchDayData.matches.map(m => `
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+            <span class="font-bold text-slate-200 text-sm sm:w-32 text-right">${m.playerA}</span>
+            <div class="bg-slate-900 border border-slate-700 px-3 py-1 rounded font-extrabold text-indigo-400 text-sm">
+              ${m.status === 'APPROVED' ? `${m.scoreA} - ${m.scoreB}` : 'VS'}
+            </div>
+            <span class="font-bold text-slate-200 text-sm sm:w-32 text-left">${m.playerB}</span>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            ${m.status === 'APPROVED' ? `
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20 font-semibold">Completed</span>
+              ${m.proof ? `<a href="${m.proof}" target="_blank" class="text-xs bg-slate-700 text-indigo-300 px-2.5 py-1 rounded-full hover:bg-slate-600">See Proof</a>` : ''}
+            ` : m.status === 'PENDING' ? `
+              <span class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded-full border border-amber-500/20 font-semibold">Pending Approval</span>
+            ` : `
+              <button onclick="openSubmitModal('${m.id}', '${m.playerA}', '${m.playerB}')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-lg">Submit Result</button>
+            `}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Submit Modal Handles
+    function openSubmitModal(id, pA, pB) {
+      document.getElementById('modal-match-id').value = id;
+      document.getElementById('modal-player-a').innerText = pA;
+      document.getElementById('modal-player-b').innerText = pB;
+      document.getElementById('submit-modal').classList.remove('hidden');
+      document.getElementById('submit-modal').classList.add('flex');
+    }
+
+    function closeModal() {
+      document.getElementById('submit-modal').classList.add('hidden');
+      document.getElementById('submit-modal').classList.remove('flex');
+    }
+
+    function handleScoreSubmit(e) {
+      e.preventDefault();
+      const mId = document.getElementById('modal-match-id').value;
+      const sA = parseInt(document.getElementById('modal-score-a').value);
+      const sB = parseInt(document.getElementById('modal-score-b').value);
+      const url = document.getElementById('modal-proof-url').value;
+
+      fixtures.forEach(fd => {
+        fd.matches.forEach(m => {
+          if (m.id === mId) {
+            m.scoreA = sA;
+            m.scoreB = sB;
+            m.proof = url;
+            m.status = 'PENDING';
+          }
+        });
+      });
+
+      localStorage.setItem('epfl_fixtures', JSON.stringify(fixtures));
+      closeModal();
+      alert('রেজাল্ট জমা নেওয়া হয়েছে! অ্যাডমিন অ্যাপ্রুভ করলে পয়েন্ট টেবিলে যুক্ত হবে।');
+      renderFixtures();
+    }
+
+    // Render Admin Approvals List
+    function renderAdminPanel() {
+      if (!isAdmin) return;
+      const container = document.getElementById('pending-results-list');
+      let pendingList = [];
+
+      fixtures.forEach(fd => {
+        fd.matches.forEach(m => {
+          if (m.status === 'PENDING') pendingList.push(m);
+        });
+      });
+
+      if (pendingList.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400">কোনো পেন্ডিং রেজাল্ট নেই।</p>`;
+        return;
+      }
+
+      container.innerHTML = pendingList.map(m => `
+        <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 flex flex-wrap justify-between items-center gap-2">
+          <div class="text-sm font-bold text-white">
+            ${m.playerA} (${m.scoreA}) VS (${m.scoreB}) ${m.playerB}
+            ${m.proof ? `<a href="${m.proof}" target="_blank" class="block text-xs text-indigo-400 underline mt-0.5">View Screenshot Proof</a>` : ''}
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="approveMatch('${m.id}', true)" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded font-bold">Approve</button>
+            <button onclick="approveMatch('${m.id}', false)" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded font-bold">Reject</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function approveMatch(mId, isApproved) {
+      fixtures.forEach(fd => {
+        fd.matches.forEach(m => {
+          if (m.id === mId) {
+            m.status = isApproved ? 'APPROVED' : 'NOT_PLAYED';
+            if (!isApproved) { m.scoreA = null; m.scoreB = null; }
+          }
+        });
+      });
+      localStorage.setItem('epfl_fixtures', JSON.stringify(fixtures));
+      renderAdminPanel();
+      renderFixtures();
+      renderStandings();
+    }
+
+    // Standings & Leaderboard Logic
+    function renderStandings() {
+      let stats = {};
+      players.forEach(p => {
+        stats[p.name] = { name: p.name, mp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 };
+      });
+
+      fixtures.forEach(fd => {
+        fd.matches.forEach(m => {
+          if (m.status === 'APPROVED' && stats[m.playerA] && stats[m.playerB]) {
+            const pA = stats[m.playerA];
+            const pB = stats[m.playerB];
+
+            pA.mp++; pB.mp++;
+            pA.gf += m.scoreA; pA.ga += m.scoreB;
+            pB.gf += m.scoreB; pB.ga += m.scoreA;
+
+            if (m.scoreA > m.scoreB) {
+              pA.w++; pA.pts += 3; pB.l++;
+            } else if (m.scoreB > m.scoreA) {
+              pB.w++; pB.pts += 3; pA.l++;
+            } else {
+              pA.d++; pA.pts += 1; pB.d++; pB.pts += 1;
+            }
+
+            pA.gd = pA.gf - pA.ga;
+            pB.gd = pB.gf - pB.ga;
+          }
+        });
+      });
+
+      let sorted = Object.values(stats).sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+
+      const tbody = document.getElementById('standings-body');
+      tbody.innerHTML = sorted.map((p, index) => `
+        <tr class="${index === 0 ? 'bg-indigo-900/30 font-semibold' : ''}">
+          <td class="px-4 py-3 text-center font-bold">${index === 0 ? '🏆 1' : index + 1}</td>
+          <td class="px-4 py-3 font-bold text-white flex items-center space-x-2">
+            <span>${p.name}</span>
+            ${index === 0 ? '<span class="text-xs bg-amber-400/20 text-amber-400 border border-amber-400/30 px-2 py-0.5 rounded-full">Champion</span>' : ''}
+          </td>
+          <td class="px-3 py-3 text-center">${p.mp}</td>
+          <td class="px-3 py-3 text-center text-emerald-400">${p.w}</td>
+          <td class="px-3 py-3 text-center text-amber-400">${p.d}</td>
+          <td class="px-3 py-3 text-center text-red-400">${p.l}</td>
+          <td class="px-3 py-3 text-center">${p.gf}</td>
+          <td class="px-3 py-3 text-center">${p.ga}</td>
+          <td class="px-3 py-3 text-center font-bold">${p.gd > 0 ? '+' + p.gd : p.gd}</td>
+          <td class="px-3 py-3 text-center font-extrabold text-indigo-400">${p.pts}</td>
+        </tr>
+      `).join('');
+
+      // Top Leader Quick Stat
+      if (sorted.length > 0 && sorted[0].pts > 0) {
+        document.getElementById('stat-leader').innerText = `${sorted[0].name} (${sorted[0].pts} PTS)`;
+      }
+    }
+
+    // App Initialization
+    window.onload = function() {
+      populateAdminMatchdaySelect();
+      renderStandings();
+    };
+  </script>
+</body>
+</html>
