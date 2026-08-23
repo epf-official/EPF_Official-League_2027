@@ -644,17 +644,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
     }
 
 
-
-      const fdData = fixtures.find(f => f.matchDay === targetMatchDay);
-      if (fdData) {
-        await supabaseClient.from('fixtures').update({ matches: fdData.matches }).eq('match_day', targetMatchDay);
-      }
-
-      closeModal();
-      alert('রেজাল্ট জমা নেওয়া হয়েছে!');
-      renderFixtures();
-    }
-
     function renderAdminPanel() {
       if (!isAdmin) return;
       const container = document.getElementById('pending-results-list');
