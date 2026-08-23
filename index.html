@@ -317,13 +317,14 @@
           <span id="modal-player-b" class="font-bold text-sm text-indigo-300">Player B</span>
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Screenshot Image URL (Imgur / PostImage Proof Link):</label>
-          <input type="url" id="modal-proof-url" required placeholder="https://i.imgur.com/example.png" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm w-full text-white">
+          <label class="text-xs text-slate-400 block mb-1">Upload Screenshot (Gallery):</label>
+          <input type="file" id="modal-proof-file" accept="image/*" required class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm w-full text-white">
         </div>
         <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-lg text-sm">Submit For Approval</button>
       </form>
     </div>
   </div>
+
 
  <!-- Supabase CDN Link -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
