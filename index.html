@@ -451,6 +451,7 @@
     }
 
     // Generate Fixture with Supabase Sync
+        // Generate Full Round Robin Fixtures (Updated for Supabase Upsert)
     async function generateFixturesLogic() {
       if (players.length < 2) return alert('অন্তত ২ জন প্লেয়ার থাকা লাগবে!');
       
@@ -482,16 +483,19 @@
         list.splice(1, 0, list.pop());
       }
 
-      await supabaseClient.from('fixtures').delete().neq('id', 0);
       const insertData = fixtures.map(f => ({ match_day: f.matchDay, matches: f.matches }));
-      const { error } = await supabaseClient.from('fixtures').insert(insertData);
+      const { error } = await supabaseClient.from('fixtures').upsert(insertData, { onConflict: 'match_day' });
 
-      if (error) return alert('ফিক্সচার সেভ করা যায়নি!');
+      if (error) {
+        console.error("Supabase Error:", error);
+        return alert('ফিক্সচার সেভ করা যায়নি: ' + error.message);
+      }
 
-      alert('ফিক্সচার তৈরি হয়ে গেছে!');
+      alert(`সফলভাবে ${fixtures.length} টি ম্যাচ ডে-এর ফিক্সচার তৈরি হয়ে গেছে!`);
       populateAdminMatchdaySelect();
       renderFixtures();
     }
+
 
     function populateAdminMatchdaySelect() {
       const select = document.getElementById('admin-matchday-select');
