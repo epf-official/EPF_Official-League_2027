@@ -583,14 +583,12 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
         modal.classList.remove('flex');
       }
     }
-
-        async function handleScoreSubmit(e) {
+    async function handleScoreSubmit(e) {
       e.preventDefault();
       const mId = document.getElementById('modal-match-id').value;
       const sA = parseInt(document.getElementById('modal-score-a').value);
       const sB = parseInt(document.getElementById('modal-score-b').value);
 
-      // ১. গ্যালারি থেকে সিলেক্ট করা ফাইল সংগ্রহ করা
       const fileInput = document.getElementById('modal-proof-file');
       const file = fileInput.files[0];
 
@@ -599,12 +597,10 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
         return;
       }
 
-      // ২. ফাইলের একটি ইউনিক নাম তৈরি করা
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      // ৩. ছবি Supabase Storage-এ আপলোড করা
       const { data: uploadData, error: uploadError } = await supabaseClient
         .storage
         .from('match-proofs')
@@ -616,7 +612,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
         return;
       }
 
-      // ৪. আপলোড হওয়া ছবির পাবলিক লিংক বের করা
       const { data: publicUrlData } = supabaseClient
         .storage
         .from('match-proofs')
@@ -647,6 +642,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
       alert('রেজাল্ট জমা নেওয়া হয়েছে!');
       renderFixtures();
     }
+
 
 
       const fdData = fixtures.find(f => f.matchDay === targetMatchDay);
