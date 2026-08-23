@@ -584,12 +584,45 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
       }
     }
 
-    async function handleScoreSubmit(e) {
+        async function handleScoreSubmit(e) {
       e.preventDefault();
       const mId = document.getElementById('modal-match-id').value;
       const sA = parseInt(document.getElementById('modal-score-a').value);
       const sB = parseInt(document.getElementById('modal-score-b').value);
-      const url = document.getElementById('modal-proof-url').value;
+
+      // ১. গ্যালারি থেকে সিলেক্ট করা ফাইল সংগ্রহ করা
+      const fileInput = document.getElementById('modal-proof-file');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('দয়া করে গ্যালারি থেকে একটি স্ক্রিনশট সিলেক্ট করুন!');
+        return;
+      }
+
+      // ২. ফাইলের একটি ইউনিক নাম তৈরি করা
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      // ৩. ছবি Supabase Storage-এ আপলোড করা
+      const { data: uploadData, error: uploadError } = await supabaseClient
+        .storage
+        .from('match-proofs')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        alert('ছবি আপলোডে সমস্যা হয়েছে! আবার চেষ্টা করুন।');
+        console.error(uploadError);
+        return;
+      }
+
+      // ৪. আপলোড হওয়া ছবির পাবলিক লিংক বের করা
+      const { data: publicUrlData } = supabaseClient
+        .storage
+        .from('match-proofs')
+        .getPublicUrl(filePath);
+
+      const url = publicUrlData.publicUrl;
 
       let targetMatchDay = null;
 
@@ -604,6 +637,17 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
           }
         });
       });
+
+      const fdData = fixtures.find(f => f.matchDay === targetMatchDay);
+      if (fdData) {
+        await supabaseClient.from('fixtures').update({ matches: fdData.matches }).eq('match_day', targetMatchDay);
+      }
+
+      closeModal();
+      alert('রেজাল্ট জমা নেওয়া হয়েছে!');
+      renderFixtures();
+    }
+
 
       const fdData = fixtures.find(f => f.matchDay === targetMatchDay);
       if (fdData) {
