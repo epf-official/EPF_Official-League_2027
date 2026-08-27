@@ -335,17 +335,7 @@
 
       </div>
     </section>
-    <!-- Set Active Matchday for Today's Matches -->
-<div class="border-t border-slate-700 pt-4 mt-4">
-  <h3 class="font-bold text-amber-400 mb-2"><i class="fa-solid fa-calendar-day"></i> Set Today's Active Match Day</h3>
-  <div class="flex gap-2">
-     <select id="admin-active-md-select" class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm text-white w-full">
-        <option value="">None (কোনো ম্যাচ নেই)</option>
-        <!-- জাভাস্ক্রিপ্ট দিয়ে অপশন অটো লোড হবে -->
-     </select>
-     <button onclick="setActiveMatchday()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg font-bold text-sm shrink-0">Set Active</button>
-  </div>
-</div>
+    
     
 
   </main>
@@ -415,7 +405,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
 
         populateAdminMatchdaySelect();
         renderStandings();
-        loadTodaysMatches();
         loadDisciplinaryData();
       } catch (err) {
         console.error('Data Fetch Error:', err);
@@ -927,70 +916,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
       }
         }
     // Active Match Day লোড ও রেন্ডার করার ফাংশন
-async function loadTodaysMatches() {
-  const container = document.getElementById('todays-matches-container'); // আপনার Today's Matches এর মেইন ডিভ
-  if (!container) return;
-
-  // Supabase থেকে একটিভ ম্যাচ ডে আনা
-  const { data } = await supabaseClient.from('active_matchday').select('*').limit(1);
-  const activeMd = data && data.length > 0 ? data[0].match_day : null;
-
-  if (!activeMd) {
-    container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">আজকে নির্ধারিত কোনো ম্যাচ নেই। ফিক্সচার সেকশনে গিয়ে সমস্ত ম্যাচ দেখুন।</p>`;
-    return;
-  }
-
-  // একটিভ ম্যাচ ডের ম্যাচসমূহ ফিক্সচার থেকে খুঁজে বের করা
-  const currentFix = fixtures.find(f => String(f.matchDay) === String(activeMd));
-  
-  if (!currentFix || !currentFix.matches || currentFix.matches.length === 0) {
-    container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Match Day ${activeMd}-এর কোনো ম্যাচ পাওয়া যায়নি।</p>`;
-    return;
-  }
-
-  // ম্যাচগুলো স্ক্রিনে দেখানো
-  container.innerHTML = `
-    <h4 class="font-bold text-amber-400 mb-3 text-center">Match Day ${activeMd}</h4>
-    <div class="space-y-3">
-      ${currentFix.matches.map(m => `
-        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700 flex justify-between items-center text-xs sm:text-sm">
-          <span class="font-semibold text-slate-200">${m.p1}</span>
-          <span class="px-2 py-1 bg-slate-800 rounded font-bold text-indigo-400">${m.p1Score ?? '-'} VS ${m.p2Score ?? '-'}</span>
-          <span class="font-semibold text-slate-200">${m.p2}</span>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-// অ্যাডমিন প্যানেল থেকে Active Match Day আপডেট করা
-async function setActiveMatchday() {
-  const selectedMd = document.getElementById('admin-active-md-select').value;
-  
-  // আগের সব রেকর্ড রিমুভ করে নতুন সিলেক্ট করা ম্যাচ ডে বসানো
-  await supabaseClient.from('active_matchday').delete().neq('match_day', '0'); 
-  
-  if (selectedMd) {
-    await supabaseClient.from('active_matchday').insert([{ match_day: selectedMd }]);
-    alert(`Match Day ${selectedMd} সফলভাবে Today's Matches হিসেবে সেট করা হয়েছে!`);
-  } else {
-    alert("Today's Matches ক্লিয়ার করা হয়েছে! এখন কোনো ম্যাচ দেখাবে না।");
-  }
-
-  loadTodaysMatches();
-}
-
-// অ্যাডমিন ড্রপডাউনে ম্যাচ ডে অপশনগুলো অটো বসানো
-function populateAdminMatchdaySelect() {
-  const select = document.getElementById('admin-active-md-select');
-  if (!select || !fixtures) return;
-
-  select.innerHTML = `<option value="">None (কোনো ম্যাচ নেই)</option>`;
-  fixtures.forEach(f => {
-    select.innerHTML += `<option value="${f.matchDay}">Match Day ${f.matchDay}</option>`;
-  });
-}
-    
+asyn
     
   </script>
 </body>
