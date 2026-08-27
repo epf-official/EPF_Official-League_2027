@@ -413,6 +413,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
 
         populateAdminMatchdaySelect();
         renderStandings();
+        loadTodaysMatches();
         loadDisciplinaryData();
       } catch (err) {
         console.error('Data Fetch Error:', err);
