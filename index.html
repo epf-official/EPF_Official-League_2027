@@ -905,12 +905,26 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
 const cardTemplate = (p) => `
   <div class="bg-slate-800 p-2 rounded border border-slate-700 mb-2">
     <div>
-      <span class="font-bold text-slate-200">${p.player || p.playerName || p.name}</span>
+      <span class="font-bold text-slate-200">${p.player_name}</span>
       <p class="text-[11px] text-slate-400 mt-1">Reason: ${p.reason} | Ref: ${p.referee}</p>
     </div>
     <span class="text-[10px] text-slate-500 font-bold">${p.date}</span>
   </div>
 `;
+
+yList.innerHTML = yellows.length ? yellows.map(cardTemplate).join('') : '<p class="text-sm text-slate-500">কোনো রেকর্ড নেই</p>';
+rList.innerHTML = reds.length ? reds.map(cardTemplate).join('') : '<p class="text-sm text-slate-500">কোনো রেকর্ড নেই</p>';
+bList.innerHTML = bans.length ? bans.map(cardTemplate).join('') : '<p class="text-sm text-slate-500">কোনো রেকর্ড নেই</p>';
+
+if (adminList && isAdmin) {
+    adminList.innerHTML = penalties.map(p => `
+      <div class="flex justify-between items-center bg-slate-800 p-2 rounded mb-2 border border-slate-700">
+        <span class="text-xs text-slate-300"><b>${p.player_name}</b> - ${p.penalty_type || p.penaltyType}</span>
+        <button onclick="deletePenalty('${p.id}')" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `).join('');
+}
+
 
 
 
