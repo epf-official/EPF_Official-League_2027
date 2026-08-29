@@ -62,25 +62,25 @@
       </div>
 
       <!-- Disciplinary & Punishment Board -->
-      <div class="bg-slate-800 rounded-xl p-5 border border-slate-700 mt-6 shadow-xl">
+      <div class="bg-slate-800 rounded-xl p-5 shadow-lg">
         <h3 class="text-lg font-bold flex items-center text-red-500 border-b border-slate-700 pb-3 mb-4">
           <i class="fa-solid fa-gavel mr-2"></i> Disciplinary Board
         </h3>
         
         <!-- Yellow Cards Section -->
-        <div class="mb-5 bg-slate-900 p-3 rounded-lg border border-amber-500/20">
+        <div class="mb-6">
            <h4 class="font-bold text-amber-400 mb-2 border-b border-slate-700 pb-1">🟨 Yellow Cards</h4>
            <div id="list-yellow" class="space-y-2"></div>
         </div>
         
         <!-- Red Cards Section -->
-        <div class="mb-5 bg-slate-900 p-3 rounded-lg border border-red-500/20">
+        <div class="mb-6">
            <h4 class="font-bold text-red-400 mb-2 border-b border-slate-700 pb-1">🟥 Red Cards</h4>
            <div id="list-red" class="space-y-2"></div>
         </div>
         
         <!-- Permanent Ban Section -->
-        <div class="bg-slate-900 p-3 rounded-lg border border-slate-600">
+        <div>
            <h4 class="font-bold text-slate-300 mb-2 border-b border-slate-700 pb-1">🚫 Permanent Bans</h4>
            <div id="list-ban" class="space-y-2"></div>
         </div>
@@ -902,14 +902,16 @@ const SUPABASE_ANON_KEY = 'sb_publishable_B1PH5FeuNdfQ5xlkXfXjXA_0YPiNffX';
       const bans = penalties.filter(p => p.penalty_type === 'Ban');
 
       const cardTemplate = (p) => `
-        <div class="bg-slate-800 p-2 rounded border border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-          <div>
-            <span class="font-bold text-slate-200 text-sm">${p.player_name}</span>
-            <p class="text-[11px] text-slate-400">Reason: ${p.reason} | Ref: <span class="text-indigo-300">${p.referee}</span></p>
-          </div>
-          <span class="text-[10px] text-slate-500 font-semibold">${p.date}</span>
-        </div>
-      `;
+  <div class="bg-slate-900/80 p-3.5 rounded-lg mb-3 border-l-[3px] border-indigo-500 shadow-md flex flex-col">
+    <span class="font-bold text-slate-100 text-[15px] mb-1">${p.playerName || p.name}</span>
+    <p class="text-[12px] text-slate-400 leading-relaxed mb-2">
+      <span class="font-medium text-slate-300">Reason:</span> ${p.reason} 
+      <br>
+      <span class="text-indigo-400 mt-0.5 inline-block"><i class="fa-solid fa-gavel text-[10px] mr-1"></i>Ref: ${p.referee}</span>
+    </p>
+    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">${p.date}</span>
+  </div>
+`;
 
       yList.innerHTML = yellows.length ? yellows.map(cardTemplate).join('') : '<p class="text-xs text-slate-500">কোনো রেকর্ড নেই</p>';
       rList.innerHTML = reds.length ? reds.map(cardTemplate).join('') : '<p class="text-xs text-slate-500">কোনো রেকর্ড নেই</p>';
